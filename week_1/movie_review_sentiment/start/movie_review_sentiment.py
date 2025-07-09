@@ -1,7 +1,10 @@
 from openai import OpenAI
 
+import json
+
 # Initialize OpenAI client
 client = OpenAI()
+
 
 def analyze_sentiment(review):
     """
@@ -14,27 +17,33 @@ def analyze_sentiment(review):
     #       thought: [analysis]
     #       sentiment: [positive/negative]
     # 3. Includes the review text
-    prompt = """
-    # TODO: Add your prompt here
-    """
+    prompt = f"""
+Provide me with a sentiment analysis, and sentiment score for the following movie review:
 
+Review: {review}
+
+In your output i want you to do it on two lines, with the first line being the written analysis, the second ONLY the word positive or negative, depending on the sentiment of the movie review.
+"""
     response = client.chat.completions.create(
         model="gpt-4o-mini-2024-07-18",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7
     )
 
-    content = response.choices[0].message.content
+    # split the response into two lines
+    content = response.choices[0].message.content.splitlines()
+
     # TODO: Parse the response to extract thought and sentiment
     # The response should be in the format:
     # thought: [analysis]
     # sentiment: [positive/negative]
     result = {
-        "thought": "",  # TODO: Extract thought
-        "sentiment": ""  # TODO: Extract sentiment
+        "thought": content[0],
+        "sentiment": content[1]
     }
-    
+
     return result
+
 
 def main():
     # Test cases
@@ -45,11 +54,13 @@ def main():
     ]
 
     # Test each review
-    for i, review in enumerate(reviews, 1):
+    for i, review in enumerate(reviews, 0):
         result = analyze_sentiment(review)
         print(f"\nReview {i}:")
+        print(f"({review})")
         print(f"Thought: {result['thought']}")
-        print(f"Sentiment: {result['sentiment']}")
+        print(f"Sentiment: {result['sentiment'].lower()}")
+
 
 if __name__ == "__main__":
-    main() 
+    main()
