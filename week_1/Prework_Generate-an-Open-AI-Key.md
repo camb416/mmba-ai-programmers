@@ -8,7 +8,7 @@ Here's why:
 ### API Cost-Literacy is Critical  
 Learning how to use OpenAI's billing tools is very important for helping your company understand the costs of using AI. As you start advocating for AI projects, being able to clearly explain and predict expenses will make a huge difference. It shows that you've done your homework and can back up your ideas with real numbers, making it easier for your company to trust and support your AI plans. Plus, it helps make sure AI use stays within budget and delivers value. 
 
-*We recommend you put $5 into your account* and closely monitor the spend as you go through your projects here to learn how much API usage costs as a hands-on way of learning how to navigate different models, token usage, etc. You can add in more money as you need or not depending on the scope of your project goals. *To get through all the course material should cost around $1, but you may use more if your project requires it.*
+*We recommend you put \$5 into your account* and closely monitor the spend as you go through your projects here to learn how much API usage costs as a hands-on way of learning how to navigate different models, token usage, etc. You can add in more money as you need or not depending on the scope of your project goals. *To get through all the course material should cost around $1, but you may use more if your project requires it.*
 
 Seeing those tokens get used up, monitoring the throughput, and seeing all the dots connect is part of the magic that you will need to explain to your team or leaders.  
 
