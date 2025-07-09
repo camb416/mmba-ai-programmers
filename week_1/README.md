@@ -23,7 +23,7 @@ Implement a function that analyzes movie reviews and extracts sentiment scores.
 Run the script to verify your implementation:
 
 ```bash
-python main.py
+python week_1/movie_review_sentiment/start/movie_review_sentiment.py
 ```
 
 ## Solution
