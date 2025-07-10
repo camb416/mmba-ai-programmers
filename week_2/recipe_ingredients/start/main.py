@@ -5,18 +5,13 @@ from pprint import pprint
 import os
 import sys
 
-
-# TODO: Add a new Ingredients model that can be used in the Recipe model with the following properties:
-# - amount
-# - unit
-# - name
-
+# Model for Receipe Ingredients
 class Ingredient(BaseModel):
     amount: float = Field(description="Quantity of the ingredient", default=0.0)
     unit: str = Field(description="Unit of measurement", default="")
     name: str = Field(description="Name of ingredient", default="")
 
-
+# Model for Recipe. Contains title, array of Ingredients, and array of text instructions.
 class Recipe(BaseModel):
     """
     Use this model when working with complete cooking recipes.
@@ -25,7 +20,7 @@ class Recipe(BaseModel):
     ingredients: List[Ingredient] = Field(description="List of ingredients needed for the recipe")
     instructions: List[str] = Field(description="Step-by-step instructions to prepare the recipe")
 
-
+# Makes the OpenAI call to convert recipe text to a structured Recipe object.
 def get_recipe_from_text(recipe_text: str) -> Recipe:
     """
     Convert recipe text into a structured Recipe object using OpenAI.
@@ -43,11 +38,11 @@ def get_recipe_from_text(recipe_text: str) -> Recipe:
 
     return response.output_parsed
 
-
-def print_recipe(recipe: Recipe, saveAsFile: bool = False):
+# Function to print the recipe as markdown. Optionally saves to a file.
+def print_recipe(recipe: Recipe, saveAsFile: bool = False, filename: str = 'out.md'):
     orig_stdout = sys.stdout
     if saveAsFile:
-        f = open('out.md', 'w')
+        f = open(filename, 'w')
         sys.stdout = f
 
     print(f"# {recipe.title}")
@@ -64,8 +59,6 @@ def print_recipe(recipe: Recipe, saveAsFile: bool = False):
         sys.stdout = orig_stdout
         f.close()
 
-
-# Example usage
 if __name__ == "__main__":
     # Read recipe text from file
 
@@ -74,6 +67,12 @@ if __name__ == "__main__":
     with open(recipe_path, "r") as file:
         recipe_text = file.read()
 
-    # Get structured recipe
-    recipe = get_recipe_from_text(recipe_text)
-    print_recipe(recipe, True)
+    # change this to the number of times you want to run the recipe generation
+    # This is useful to see if the output is different each time (spoiler alert: it is)
+
+    num_iterations = 1
+    for i in range(0,num_iterations):
+        # Get structured recipe
+        print(f"Processing recipe {i+1}...")
+        recipe = get_recipe_from_text(recipe_text)
+        print_recipe(recipe, True, f"recipe_out_{i}.md")
