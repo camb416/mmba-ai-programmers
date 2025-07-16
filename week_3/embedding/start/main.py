@@ -42,14 +42,16 @@ index = faiss.IndexFlatL2(dimension)
 index.add(numpy.array(embeddings, dtype='float32'))
 
 query = 'Tell me about a prison movie'
-print(" --- --- Query Processing --- ---")
-print(f"I'd like to know what text is most relevant to the query: \"{query}\"\n")
+
 
 query_embedding = get_embedding(query)
 distances, indicies = index.search(numpy.array([query_embedding], dtype='float32'), 3)
 
 closest_distance = 999.0
 closest_text_id = -1
+
+print(" --- --- Query Processing --- ---")
+
 
 for i in range(3):
     print(f"Match {i+1}, Distance: {distances[0][i]:.4f}")
@@ -58,6 +60,6 @@ for i in range(3):
         closest_distance = distances[0][i]
         closest_text_id = indicies[0][i]
 
-print(" --- --- Results --- ---")
+print("\n --- --- Results --- ---")
 if closest_text_id >= 0:
     print(f"The closest match to the query is: `{texts[closest_text_id]}` with a distance of {closest_distance:.4f}.")
