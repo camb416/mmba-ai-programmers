@@ -16,7 +16,7 @@ langsmith_client = Client(api_key=langsmith_api_key)
 
 # LANGSMITH_TRACING="true"
 # LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
-# LANGSMITH_API_KEY="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"
+# LANGSMITH_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxx"
 # LANGSMITH_PROJECT="rag-observability"
 # OPENAI_API_KEY="<your-openai-api-key>"
 
