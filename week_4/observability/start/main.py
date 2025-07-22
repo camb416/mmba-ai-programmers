@@ -14,8 +14,14 @@ langsmith_api_key = os.environ.get("LANGCHAIN_API_KEY")
 langsmith_project = "rag-observability"
 langsmith_client = Client(api_key=langsmith_api_key)
 
+# LANGSMITH_TRACING="true"
+# LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
+# LANGSMITH_API_KEY="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"
+# LANGSMITH_PROJECT="rag-observability"
+# OPENAI_API_KEY="<your-openai-api-key>"
+
 # Constants
-INDEX_NAME = "test"
+INDEX_NAME = "mmba-letters"
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-4o-mini-2024-07-18"
 
@@ -122,6 +128,7 @@ def search_documents(query, namespace, top_k=5):
 
 # TODO: Add traceable decorator to track this function in LangSmith
 # Example: https://docs.smith.langchain.com/observability/how_to_guides/log_traces_to_project
+@traceable(name="ask_openai")
 def ask_openai(query, documents):
     """Ask OpenAI a question with context from the documents."""
     # Join all documents into a single context string
