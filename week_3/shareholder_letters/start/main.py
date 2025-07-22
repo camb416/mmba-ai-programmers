@@ -9,7 +9,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
 # Constants
-INDEX_NAME = "YOUR INDEX HERE"
+INDEX_NAME = "mmba-letters"
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-4o-mini-2024-07-18"
 
@@ -92,20 +92,35 @@ def search_documents(query, namespace, top_k=5):
     
     # TODO: Search Pinecone using the query_embedding
     # Implement the search functionality using the Pinecone Index query method
-    # Documentation: https://sdk.pinecone.io/python/pinecone/grpc.html#GRPCIndex.query
+    # Documentation: https://sdk.pinecone.io/python/grpc.html#pinecone.grpc.GRPCIndex.query
     # The query should:
     # 1. Get a reference to the index
+    index = pc.Index("mmba-letters")
+
     # 2. Call the query method with the appropriate parameters
+    res = index.query(vector=query_embedding,top_k=top_k, namespace=namespace, include_metadata=True)
+
     # 3. Process the results to extract the documents
-    
     # Placeholder for the actual implementation
-    docs_with_scores = []
+
+    # convert results to a list of tuples (document, score)
+
+
+
+    docs_with_scores = [(match.metadata['source'], match.score) for match in res.matches]
+
+    # Load the document content based on the source file
+    for i, (source, score) in enumerate(docs_with_scores):
+        with open(source, 'r') as f:
+            content = f.read()
+            docs_with_scores[i] = (score, source, content)
+
     return docs_with_scores
 
 def ask_openai(query, documents):
     """Ask OpenAI a question with context from the documents."""
     # Join all documents into a single context string
-    context = "\n\n".join([doc for doc, _ in documents])
+    context = "\n\n".join([doc for score, source, doc in documents])
     
     # Create messages for OpenAI
     messages = [
@@ -133,11 +148,21 @@ if __name__ == "__main__":
     # Step 2: Write a query
     user_query = "When did Berkshire Hathaway purchase it's first coke stock?" # Year: 1988
 
-    # Step 3: Check Pinecone for similar chunks
+    docs = load_documents()
+    chunks = chunk_documents(docs)
+
+    EMBED_DOCUMENTS = False
+
+    if(EMBED_DOCUMENTS):
+        embed_documents(chunks, namespace="chunks")
+
+
+
+    # # Step 3: Check Pinecone for similar chunks
     docs_and_scores = search_documents(query=user_query, namespace="chunks")
-    for _, score in docs_and_scores:
-        print(f"Score: {score}")
-    
-    # Step 4: Put docs into prompt and send to OpenAI
+    for score, source, content in docs_and_scores:
+         print(f"Letter: {source}, Score: {score}")
+
+    # # Step 4: Put docs into prompt and send to OpenAI
     response = ask_openai(user_query, docs_and_scores)
-    print(response) 
+    print(response)
