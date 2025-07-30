@@ -84,6 +84,31 @@ class TripPlanner:
                 "airline": "Example Airlines"
             }
 
+
+    def suggest_flight_with_human_input(self, departure_city: str, destination: str, prev_flight: str, notes: str="none") -> Dict:
+        """Use LLM to suggest a fictional flight."""
+        prompt = f"""Generate a fictional flight from {departure_city} to {destination}.
+               Include departure time, arrival time, and flight number. The flight should be different from the previous flight {prev_flight}. Here are some specifics on how it should be different: {notes}."""
+
+        try:
+            response = self.client.responses.parse(
+                model="gpt-4o-mini-2024-07-18",
+                input=[
+                    {"role": "system", "content": "You are a helpful travel assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                text_format=FlightInfo
+            )
+            return response.output_parsed
+        except Exception as e:
+            print(f"Error getting flight suggestion: {e}")
+            return {
+                "flight_number": "AA123",
+                "departure_time": "10:00",
+                "arrival_time": "12:00",
+                "airline": "Example Airlines"
+            }
+
     def generate_itinerary(self, destination: str) -> Dict:
         """Use LLM to generate a brief itinerary."""
         prompt = f"""Generate a brief 3-day itinerary for {destination}.
@@ -135,13 +160,28 @@ class TripPlanner:
         # Step 2: Flight Selection
         departure_city = input("\nEnter your departure city: ").strip()
         suggested_flight = self.suggest_flight(departure_city, destination)
-        
+
         print("\nSuggested flight:")
         print(f"Airline: {suggested_flight.airline}")
         print(f"Flight: {suggested_flight.flight_number}")
         print(f"Departure: {suggested_flight.departure_time}")
         print(f"Arrival: {suggested_flight.arrival_time}")
-        
+
+
+        while True:
+            if self.get_human_confirmation("Are you happy with this flight suggestion?"):
+                print("\nGreat! Let's move on to the next step.")
+                break
+            print("\nLet's try again to find a better flight. Any suggestions? If not, just press Enter.")
+            notes = input()
+            suggested_flight = self.suggest_flight_with_human_input(departure_city, destination, suggested_flight, notes)
+
+            print("\nSuggested flight:")
+            print(f"Airline: {suggested_flight.airline}")
+            print(f"Flight: {suggested_flight.flight_number}")
+            print(f"Departure: {suggested_flight.departure_time}")
+            print(f"Arrival: {suggested_flight.arrival_time}")
+
         # Step 3: Itinerary Generation
         suggested_itinerary = self.generate_itinerary(destination)
         
