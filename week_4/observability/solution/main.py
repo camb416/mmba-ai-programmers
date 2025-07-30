@@ -15,7 +15,7 @@ langsmith_project = "rag-observability"
 langsmith_client = Client(api_key=langsmith_api_key)
 
 # Constants
-INDEX_NAME = "test"
+INDEX_NAME = "mmba-letters"
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-4o-mini-2024-07-18"
 
@@ -123,7 +123,7 @@ def search_documents(query, namespace, top_k=5):
 
 @traceable(
         name="ask_openai",
-        project_name=langsmith_project,
+        project_name="rag-observability",
         run_type="llm"
         )
 def ask_openai(query, documents):
