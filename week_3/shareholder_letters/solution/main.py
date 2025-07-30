@@ -9,7 +9,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
 # Constants
-INDEX_NAME = "test"
+INDEX_NAME = "mmba-letters"
 EMBEDDING_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-4o-mini-2024-07-18"
 
