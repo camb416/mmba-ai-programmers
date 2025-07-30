@@ -6,6 +6,10 @@ from langsmith.evaluation import evaluate
 # Initialize the OpenAI client
 client = OpenAI()
 
+from langsmith import Client
+
+langsmith_client = Client()
+
 # Dataset name in LangSmith (already uploaded)
 dataset_name = "news_dataset_class"
 
@@ -42,10 +46,10 @@ def make_call_to_llm(input):
 def perform_eval(llm_result, dataset_item):
     try:
         # Parse the model's output
-        llm_output = json.loads(llm_result.outputs['output'])
+        llm_output = json.loads(llm_result['output'])
         
         # Parse the expected output
-        expected_output = json.loads(dataset_item.outputs['output'])
+        expected_output = json.loads(dataset_item['output'])
         
         # Extract score from response
         # For a simpler implementation, let's manually calculate the score
@@ -63,3 +67,39 @@ def perform_eval(llm_result, dataset_item):
 # See https://docs.smith.langchain.com/evaluation for reference and examples
 # This should evaluate make_call_to_llm against the dataset_name using perform_eval
 # and create an experiment with the prefix "news_extraction_homework"
+
+
+
+if __name__ == "__main__":
+    # loop through the csv dataset and call the make_call_to_llm function
+    # and print the results
+    dataset_path = "news_dataset.csv"  # Replace with your dataset path
+    if os.path.exists(dataset_path):
+        with open(dataset_path, 'r') as file:
+            # load dataset from CSV
+            import csv
+            dataset = [row for row in csv.DictReader(file)]
+        # Iterate through the dataset and call the LLM
+        print("Starting evaluation of the dataset...")
+         # Call the LLM for each item in the dataset
+         # and print the input and output
+        print(f"Loaded {len(dataset)} items from the dataset.")
+        for item in dataset:
+            result = make_call_to_llm(item)
+            print(f"Input: {item['news']}\nOutput: {result['output']}\n")
+            score = langsmith_client.evaluate(
+                make_call_to_llm,
+                data=dataset_name,
+                evaluators=[
+                    perform_eval
+                ],
+                experiment_prefix="news_extraction_homework",
+                max_concurrency=2,
+            )
+
+
+
+
+
+    else:
+        print(f"Dataset file {dataset_path} does not exist.")
